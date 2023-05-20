@@ -11,10 +11,10 @@ public class PlayManager : MonoBehaviour
 
     int coinValue = 0;
 
-    private void Update()
-    {
-        scoreText.text = coinValue.ToString();
-    }
+    // private void Update()
+    // {
+    //     scoreText.text = coinValue.ToString();
+    // }
 
     public int CoinValue { get => coinValue; set => coinValue = value; }
 
@@ -28,5 +28,10 @@ public class PlayManager : MonoBehaviour
     {
         finishedText.text = "Menang Doang,Korupsi Kagak!!!\n Score = " + coinValue;
         finishedCanvas.SetActive(true);
+    }
+
+    private int GetScore()
+    {
+        return coinValue * 10;
     }
 }
