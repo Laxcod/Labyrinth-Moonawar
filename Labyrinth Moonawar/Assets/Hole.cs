@@ -15,7 +15,6 @@ public class Hole : MonoBehaviour
     {
         if (other.CompareTag("Ball"))
         {
-            Debug.Log("Ball Enter");
             OnBallEnter.Invoke();
         }
     }
