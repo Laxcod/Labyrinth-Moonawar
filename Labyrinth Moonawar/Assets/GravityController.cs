@@ -4,26 +4,23 @@ using UnityEngine;
 
 public class GravityController : MonoBehaviour
 {
-    [SerializeField] float acceleration = 9.8f;
-    Vector3 gravityOffset;
-    bool isActive;
+    [SerializeField] float acceleration;
 
-    // Start is called before the first frame update
+    Quaternion gravityOffset = Quaternion.identity;
+
+    bool isActive = true;
+
     void Start()
     {
-        if (SystemInfo.supportsGyroscope)
-        {
+        if(SystemInfo.supportsGyroscope)
             Input.gyro.enabled = true;
-            isActive = true;
-        }
-        CalibrateGravity();
     }
 
     void Update()
     {
-        if (isActive) 
+        if(isActive)
         {
-            Physics.gravity = GetGravityFromSensor() - gravityOffset;
+            Physics.gravity = gravityOffset * GetGravityFromSensor();
         }
         else
         {
@@ -31,10 +28,28 @@ public class GravityController : MonoBehaviour
         }
     }
 
+    public void CalibrateGravity()
+    {
+        gravityOffset = Quaternion.FromToRotation(GetGravityFromSensor(), Vector3.down * acceleration);
+    }
+
+    public Vector3 GetGravityFromSensor()
+    {
+        Vector3 gravity;
+
+        if(Input.gyro.gravity != Vector3.zero)
+            gravity = Input.gyro.gravity * acceleration;
+        else 
+            gravity = Input.acceleration * acceleration;
+
+        gravity.z = Mathf.Clamp(gravity.z, float.MinValue, -1);
+        return new Vector3(gravity.x, gravity.z, gravity.y);
+    }
+
     public void SetActive(bool value)
     {
         isActive = value;
-        if (value)
+        if(value)
         {
             Time.timeScale = 1;
         }
@@ -42,25 +57,5 @@ public class GravityController : MonoBehaviour
         {
             Time.timeScale = 0;
         }
-    }
-
-    public void CalibrateGravity()
-    {
-        gravityOffset = GetGravityFromSensor() - Vector3.down * acceleration;
-    }
-
-    public Vector3 GetGravityFromSensor()
-    {
-        Vector3 gravity;
-        if (Input.gyro.gravity != Vector3.zero)
-        {
-            gravity = Input.gyro.gravity * acceleration;
-        }
-        else
-        {
-            gravity = Input.acceleration * acceleration;
-        }
-        gravity.z = Mathf.Clamp(gravity.z, float.MinValue, -1);
-        return new Vector3(gravity.x, gravity.z, gravity.y);
     }
 }
