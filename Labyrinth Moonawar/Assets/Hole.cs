@@ -5,17 +5,18 @@ using UnityEngine.Events;
 
 public class Hole : MonoBehaviour
 {
-    public UnityEvent OnBallEnter;
-    private void OnCollisionEnter(Collision collision)
+    [SerializeField] CustomEvent customEvent;
+
+    private void OnCollisionEnter(Collision other)
     {
-        OnTriggerEnter(collision.collider);
+        OnTriggerEnter(other.collider);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Ball"))
+        if(other.CompareTag("Ball"))
         {
-            OnBallEnter.Invoke();
+            customEvent.OnInvoked.Invoke();
         }
     }
 }
