@@ -1,80 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayManager : MonoBehaviour
 {
-    [SerializeField] GameObject ball;
-    [SerializeField] GameObject finishedCanvas;
+    [SerializeField] GameObject FinishedCanvas;
+    [SerializeField] TMP_Text finishedText;
     [SerializeField] CustomEvent gameOverEvent;
     [SerializeField] CustomEvent playerWinEvent;
-    [SerializeField] TMP_Text finishedText;
-    [SerializeField] TMP_Text timeText;
-    [SerializeField] TMP_Text countdownText;
-    [SerializeField] float timeRemaining;
-    [SerializeField] float countdownRemaining;
+    [SerializeField] private int coin;
+    public UnityEvent<int> OnScoreUpdate;
 
-    // int coin;
-    bool isWin;
+    // int coin = 10; //TODO
 
-     private void Update() 
-    {
-        if(countdownRemaining >= 0)
-        {
-            countdownRemaining -= Time.deltaTime;
-            countdownText.text = countdownRemaining.ToString("0");
-        }
-        else
-        {
-            //  countdownText.text = "";
-
-            if(timeRemaining > 0 && isWin != true)
-            {
-                timeRemaining -= Time.deltaTime;
-                timeText.text = timeRemaining.ToString("0");
-            }
-            else if(isWin == true)
-            {
-                // timeRemaining = timeRemaining;
-            }
-            else
-            {
-                GameOver();
-            }
-        }
-
-    }
-
-    private void OnEnable() 
+    private void OnEnable()
     {
         gameOverEvent.OnInvoked.AddListener(GameOver);
         playerWinEvent.OnInvoked.AddListener(PlayerWin);
     }
 
-    private void OnDisable() 
+    private void OnDisable()
     {
         gameOverEvent.OnInvoked.RemoveListener(GameOver);
-        playerWinEvent.OnInvoked.RemoveListener(PlayerWin);       
+        playerWinEvent.OnInvoked.RemoveListener(PlayerWin);
     }
 
     public void GameOver()
     {
-        ball.GetComponent<Rigidbody>().isKinematic = true;
-        finishedText.text = "You Failed!";
-        finishedCanvas.SetActive(true);
+        GameManagerSettings gameManager = FindObjectOfType<GameManagerSettings>();
+        gameManager.GameActive = false;
+        finishedText.text = "Yahahah Pecundang";
+        FinishedCanvas.SetActive(true);
     }
 
     public void PlayerWin()
     {
-        isWin = true;
-        finishedText.text = "You Win!\nRemaining Time : " + timeText.text + " s";
-        finishedCanvas.SetActive(true);
+        GameManagerSettings gameManager = FindObjectOfType<GameManagerSettings>();
+        gameManager.GameActive = false;
+        finishedText.text = "Menang Berkat Orang Dalam!!\nScore: " + GetScore();
+        FinishedCanvas.SetActive(true);
     }
 
-    // private int GetCoin()
-    // {
-    //     return coin * 10;
-    // }
+    public void AddCoin(int CoinData)
+    {
+        this.coin += CoinData;
+        OnScoreUpdate.Invoke(GetScore());
+    }
+
+    private int GetScore()
+    {
+        // return coin * 10;
+        return coin;
+    }
 }

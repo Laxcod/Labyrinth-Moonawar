@@ -1,8 +1,7 @@
-
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class WaitCountText : MonoBehaviour
 {
@@ -10,6 +9,6 @@ public class WaitCountText : MonoBehaviour
 
     public void UpdateWaitText(int value)
     {
-        text.text = "Plase Wait : " + value + "s";
+        text.text = "wait: " + value + " s";
     }
 }

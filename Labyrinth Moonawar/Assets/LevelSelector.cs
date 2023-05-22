@@ -49,4 +49,10 @@ public class LevelSelector : MonoBehaviour
             }
         }
     }
+
+    
+    public void Quit()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 }

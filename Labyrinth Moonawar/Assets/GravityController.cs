@@ -4,42 +4,44 @@ using UnityEngine;
 
 public class GravityController : MonoBehaviour
 {
-    [SerializeField] float acceleration;
+    [SerializeField] float acceleration = 9.8f;
 
-    Quaternion gravityOffset = Quaternion.identity;
+    Vector3 gravityOffset = Vector3.zero;
+    bool isActive = false;
 
-    bool isActive = true;
-
+    // Start is called before the first frame update
     void Start()
     {
-        if(SystemInfo.supportsGyroscope)
+        if (SystemInfo.supportsGyroscope)
             Input.gyro.enabled = true;
     }
 
+    // Update is called once per frame
     void Update()
     {
         if(isActive)
         {
-            Physics.gravity = gravityOffset * GetGravityFromSensor();
+            Debug.Log("gyro aktif");
+            Physics.gravity = GetGravityFromSensor() + gravityOffset;
         }
         else
         {
+            Debug.Log("gyro tidak aktif");
             Physics.gravity = Vector3.zero;
         }
     }
 
     public void CalibrateGravity()
     {
-        gravityOffset = Quaternion.FromToRotation(GetGravityFromSensor(), Vector3.down * acceleration);
+        gravityOffset = Vector3.down * acceleration - GetGravityFromSensor();
     }
 
     public Vector3 GetGravityFromSensor()
     {
         Vector3 gravity;
-
-        if(Input.gyro.gravity != Vector3.zero)
+        if (Input.gyro.gravity != Vector3.zero)
             gravity = Input.gyro.gravity * acceleration;
-        else 
+        else
             gravity = Input.acceleration * acceleration;
 
         gravity.z = Mathf.Clamp(gravity.z, float.MinValue, -1);
@@ -49,6 +51,7 @@ public class GravityController : MonoBehaviour
     public void SetActive(bool value)
     {
         isActive = value;
+        Debug.Log("Pala Bapak Kau Aktiff" + isActive);
         if(value)
         {
             Time.timeScale = 1;
